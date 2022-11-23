@@ -18,7 +18,9 @@ public class BufferTest implements Runnable{
         mainThreadName = nameParam;
     }
 
-    public void run() {}
+    public void run() {
+        System.out.println("Inside producer");
+    }
 
     /* BufferTest should contain your main method, and should do the following: */
     /* ◦main() should accept two command line arguments */
@@ -40,21 +42,23 @@ public class BufferTest implements Runnable{
             Thread[] t = new Thread[numConsumers + 1]; // An array of threads for the consumers and main.
             Consumer[] userConsumers = new Consumer[numConsumers];          // An array of consumers.
             for (int i = 0; i < numConsumers; i++) {
-                String consumerName = "Consumer " + i;
-                userConsumers[i] = new Consumer(userBuffer,consumerName);
-                t[i+1] = new Thread(userConsumers[i]);
+                t[i] = new Thread(userConsumers[i]);
+                t[i].setName("Consumer " + i);
+                userConsumers[i] = new Consumer(userBuffer,t[i].getName());
+                t[i].start();
             }
 
             /* ◦Set the thread name of the main thread to be "Producer" */
             t[numConsumers] = new Thread(new BufferTest("Producer"));
+            t[numConsumers].start();
 
             /* ◦Continually accept input strings from the user, creating a Message with the input string,
              and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
-            Console cmmdInput = System.console();
+            Console cmdInput = System.console();
             String inputStr = "";
             while (!inputStr.equals("terminate")) {
                 System.out.println("Enter a string: ");
-                inputStr = cmmdInput.readLine();
+                inputStr = cmdInput.readLine();
             }
             System.out.println("inputStr = " + inputStr);
         } catch (Exception e) {

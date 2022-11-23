@@ -8,11 +8,13 @@ public class Consumer implements Runnable {
     private String consumerName;
 
     /* •Consumer should have a constructor that takes a BoundedBuffer as a parameter. */
-    public Consumer (BoundedBuffer bb, String cnsmrNm) {
-        consumerName = cnsmrNm;
+    public Consumer (BoundedBuffer bb, String cName) {
+        consumerName = cName;
     }
 
-    public void run() {}
+    public void run() {
+        System.out.println("Inside " + consumerName);
+    }
 
     /* ◦Consumer should continually read from the BoundedBuffer by calling the take() method. */
     void takeCaller() {}

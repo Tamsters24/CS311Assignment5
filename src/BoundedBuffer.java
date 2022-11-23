@@ -39,38 +39,46 @@ public class BoundedBuffer {
      *  to also do this. This means that you may need to cast objects
      *  that you read from the BoundedBuffer. */
 
-    /* ◦take() needs to return a variable of type Object */
-    // From reference. Compare with Day 12/13 Slides. Condition Variable: count
-    Object take() throws InterruptedException { //get() {
-        lock.lock();                            //  lock.acquire();
-        try {
-            while (count == 0)                  //  while (front == tail)
-                notEmpty.await();               //    empty.wait(lock);
-            Object o = items[takeptr];          //  item = buf[front % MAX]
-            if (++takeptr == items.length)
-                takeptr = 0;
-            count--;                            //  front++;
-            notFull.signal();                   //  full.signal(lock);
-            return o;                           //  return item;
-        } finally {
-            lock.unlock();                      //  lock.release();
-        }
-    }                                           //}
-
     /* ◦put() needs to accept an Object */
     // From reference. Compare with Day 12 Slides. Comparison is "notEmpty" vs "empty"
     void put(Object obj) throws InterruptedException {  //put(item) {
         lock.lock();                                    //  lock.acquire();
+        System.out.println("put() lock acquire");
         try {
             while (count == items.length)               //  while ((tail-front)==MAX)
                 notFull.await();                        //    full.wait(lock);
+            System.out.println("put() after wait");
             items[putptr] = obj;                        //  buf[tail % MAX] = item;
             if (++putptr == items.length)
                 putptr = 0;
             count++;                                    //  tail++;
             notEmpty.signal();                          //  empty.signal(lock);
+            System.out.println("put() lock signal");
         } finally {
             lock.unlock();                              //  lock.release();
+            System.out.println("put() lock release");
         }                                               //}
     }
+
+    /* ◦take() needs to return a variable of type Object */
+    // From reference. Compare with Day 12/13 Slides. Condition Variable: count
+    Object take() throws InterruptedException {         //get() {
+        lock.lock();                                    //  lock.acquire();
+        System.out.println("take() lock acquire");
+        try {
+            while (count == 0)                          //  while (front == tail)
+                notEmpty.await();                       //    empty.wait(lock);
+            System.out.println("take() after wait");
+            Object o = items[takeptr];                  //  item = buf[front % MAX]
+            if (++takeptr == items.length)
+                takeptr = 0;
+            count--;                                    //  front++;
+            notFull.signal();                           //  full.signal(lock);
+            System.out.println("take() lock signal");
+            return o;                                   //  return item;
+        } finally {
+            lock.unlock();                              //  lock.release();
+            System.out.println("take() lock release");
+        }
+    }                                                   //}
 }

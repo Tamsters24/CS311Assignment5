@@ -12,33 +12,31 @@
 import java.io.*;
 
 public class BufferTest implements Runnable{
-    private String mainThreadName;
-
-    public BufferTest(String nameParam) {
-        mainThreadName = nameParam;
-    }
+    static BoundedBuffer userBuffer;
+    public static Message msg;
 
     public void run() {
-        System.out.println("Inside producer");
+        System.out.println("Inside Producer");
     }
 
     /* BufferTest should contain your main method, and should do the following: */
     /* ◦main() should accept two command line arguments */
     /* •All user I/O must be from the terminal. */
     public static void main (String[]args) {
-        System.out.println("hello from BufferTest:main()");
+        System.out.println("hello from BufferTest:main(), aka Producer");
         try {
-            /* the first of which is the size of the BoundedBuffer */
+            /* the first [args] of which is the size of the BoundedBuffer */
             int size = Integer.parseInt(args[0]);
 
-            /* and the second of which is the number of Consumers to create. */
+            /* and the second [args] of which is the number of Consumers to create. */
             int numConsumers = Integer.parseInt(args[1]);
 
             /* ◦Create the BoundedBuffer, with the size being set from command line. */
-            BoundedBuffer userBuffer = new BoundedBuffer(size);
+            userBuffer = new BoundedBuffer(size);
 
             /* ◦Create and start X Consumers, with X being set from the command line */
             /* ◦Set the thread name of the Consumer threads to be "Consumer" + X */
+            //t[k] = new Thread(new RowChecker(potentialMagic, k, sd));
             Thread[] t = new Thread[numConsumers + 1]; // An array of threads for the consumers and main.
             Consumer[] userConsumers = new Consumer[numConsumers];          // An array of consumers.
             for (int i = 0; i < numConsumers; i++) {
@@ -49,22 +47,45 @@ public class BufferTest implements Runnable{
             }
 
             /* ◦Set the thread name of the main thread to be "Producer" */
-            t[numConsumers] = new Thread(new BufferTest("Producer"));
+            t[numConsumers] = new Thread(new BufferTest());
+            t[numConsumers].setName("Producer");
             t[numConsumers].start();
 
             /* ◦Continually accept input strings from the user, creating a Message with the input string,
                 and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
             Console cmdInput = System.console();
             System.out.println("Enter a string: ");
-            Message toPut = new Message(cmdInput.readLine());
-            userBuffer.put(toPut);
-
-            while (toPut.isTerminate()!=true) {
+            msg = new Message(cmdInput.readLine());
+            while (!msg.isTerminate()) {
                 System.out.println("Enter a string: ");
-                toPut = new Message(cmdInput.readLine());
-                userBuffer.put(toPut);
+                msg = new Message(cmdInput.readLine());
             }
+            /*try {
+                userBuffer.put(msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            while (!msg.isTerminate()) {
+                System.out.println("Enter a string: ");
+                msg = new Message(cmdInput.readLine());
+                try {
+                    userBuffer.put(msg);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }*/
             System.out.println("Terminate here");
+
+
+            try {   //step through the array of threads and wait for each of them to finish
+                for (int k = 0; k < (numConsumers + 1); k++) {
+                    t[k].join();
+                }
+                System.out.println("=== All threads completed ===");
+            } catch (Exception e) {
+                System.err.println("join failed");
+            }
 
         } catch (Exception e) {
             /* ▪A "usage" statement should be printed if the parameters are not

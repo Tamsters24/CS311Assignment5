@@ -8,9 +8,7 @@
 public class Message {
     /* ▪Messages should have the following interface: */
     /* ◦a constructor that accepts a String message */
-    public Message(String message) {
-
-    }
+    public Message(String message) {}
 
     /* ◦a isTerminate() method, which returns true if the message is a
      *  terminate message, and false if not. */
@@ -19,6 +17,8 @@ public class Message {
          *  string in Message MUST be blank. */
         return false;
     }
+
+    void setTerminate() {}
 
     /* ▪a toString() method that returns the following:
      * ◦"quitter: true" if the message is a terminate message

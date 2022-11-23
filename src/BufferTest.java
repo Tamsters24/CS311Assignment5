@@ -24,6 +24,7 @@ public class BufferTest implements Runnable{
     /* ◦main() should accept two command line arguments */
     /* •All user I/O must be from the terminal. */
     public static void main (String[]args) {
+        System.out.println("hello from BufferTest:main()");
         try {
             /* the first of which is the size of the BoundedBuffer */
             int size = Integer.parseInt(args[0]);

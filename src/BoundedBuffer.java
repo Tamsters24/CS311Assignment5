@@ -12,21 +12,15 @@
 public class BoundedBuffer {
     /* ◦Your BoundedBuffer class should have a constructor
      *  that takes the size of the buffer as a parameter. */
-    public BoundedBuffer(int bufferSize) {
-
-    }
+    public BoundedBuffer(int bufferSize) {}
 
     /* ◦BoundedBuffer should print a message containing the
      *  thread name prior to waiting on an empty buffer. */
-    void emptyBufferPrint() {
-
-    }
+    void emptyBufferWaitMsg() {}
 
     /* ◦BoundedBuffer should print a message containing the
      *  thread name prior to waiting on a full buffer. */
-    void fullBufferPrint() {
-
-    }
+    void fullBufferWaitMsg() {}
 
     /* ◦Note that the sample code above has put() and get() methods
      *  that deal with class Object. Your BoundedBuffer class needs
@@ -35,12 +29,9 @@ public class BoundedBuffer {
 
     /* ◦take() needs to return a variable of type Object */
     Object take() {
-        Object o = new Object();
-        return o;
+        return new Object();
     }
 
     /* ◦put() needs to accept an Object */
-    void put(Object obj) {
-
-    }
+    void put(Object obj) {}
 }

@@ -53,14 +53,19 @@ public class BufferTest implements Runnable{
             t[numConsumers].start();
 
             /* ◦Continually accept input strings from the user, creating a Message with the input string,
-             and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
+                and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
             Console cmdInput = System.console();
-            String inputStr = "";
-            while (!inputStr.equals("terminate")) {
+            System.out.println("Enter a string: ");
+            Message toPut = new Message(cmdInput.readLine());
+            userBuffer.put(toPut);
+
+            while (toPut.isTerminate()!=true) {
                 System.out.println("Enter a string: ");
-                inputStr = cmdInput.readLine();
+                toPut = new Message(cmdInput.readLine());
+                userBuffer.put(toPut);
             }
-            System.out.println("inputStr = " + inputStr);
+            System.out.println("Terminate here");
+
         } catch (Exception e) {
             /* ▪A "usage" statement should be printed if the parameters are not
              *  present, followed by a program exit. The "usage" statement should

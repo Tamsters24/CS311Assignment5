@@ -55,6 +55,7 @@ public class BoundedBuffer {
                 notFull.await();                        //    full.wait(lock);
             }                                           //  }
             items[putptr] = obj;                        //  buf[tail % MAX] = item;
+            System.out.println("items[putptr]: " + items[putptr]);
             if (++putptr == items.length)
                 putptr = 0;
             count++;                                    //  tail++;
@@ -69,6 +70,8 @@ public class BoundedBuffer {
     Object take() throws InterruptedException {         //get() {
         lock.lock();                                    //  lock.acquire();
         try {
+            for (Object item : items)
+                System.out.println("[item]: [" + item + "]");
             while (count == 0) {                        //  while (front == tail) {
                 emptyBufferWaitMsg();
                 notEmpty.await();                       //    empty.wait(lock);

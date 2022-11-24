@@ -25,18 +25,15 @@ public class Message {
     /* ▪if a terminate message is being sent, the contents of the
      *  string in Message MUST be blank. */
     void setTerminate(String msgContent) {
-        if (msgContent.equals(""))
-            terminate = true;
-        else
-            terminate = false;
+        terminate = msgContent.equals("terminate");
     }
 
-    /* ▪a toString() method that returns the following:
-     * ◦"quitter: true" if the message is a terminate message
-     * ◦the string message if the message is NOT a terminate message. */
+    /* ▪a toString() method that returns the following: */
     public String toString() {
+        /* ◦"quitter: true" if the message is a terminate message */
         if (isTerminate())
             messageContent = "quitter: true";
+        /* ◦the string message if the message is NOT a terminate message. */
         return messageContent;
     }
 }

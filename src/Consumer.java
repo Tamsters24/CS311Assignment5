@@ -15,17 +15,20 @@ public class Consumer implements Runnable {
      *  as a parameter. */
     public Consumer (BoundedBuffer bb) {
         sharedBuffer = bb;
+        //sharedBuffer = BufferTest.buffer;
     }
 
     /* ◦Consumer should continually read from the BoundedBuffer
-     *  by calling the take() method. */
+     *  by calling the take() method... you may need to cast objects
+     *  that you read from the BoundedBuffer. */
     public void run() {
         consumerName = Thread.currentThread().getName();
         try {
-            /* ◦... you may need to cast objects
-             *  that you read from the BoundedBuffer. */
             consumerMsg = (Message) sharedBuffer.take();
+            printCnsmrMessage();
+            consumerSleep();
             while (!consumerMsg.isTerminate()) {
+                //System.out.println(consumerName + " is holding lock " + Thread.holdsLock(sharedBuffer));
                 consumerMsg = (Message) sharedBuffer.take();
                 printCnsmrMessage();
                 consumerSleep();
@@ -63,7 +66,6 @@ public class Consumer implements Runnable {
     /* ◦if the Consumer thread reads a message that indicates to "terminate", then that
      *  particular Consumer thread should exit. */
     void consumerExit() {
-        System.out.println(consumerName + " is exiting. Later gator.");
         Thread.currentThread().interrupt();
     }
 }

@@ -46,10 +46,9 @@ public class BoundedBuffer {
      *  that you read from the BoundedBuffer. */
 
     /* ◦put() needs to accept an Object */
-    // From reference. Compare with Day 12 Slides. Comparison is "notEmpty" vs "empty"
+    // From reference.                                  // Compare with Day 12 & 13 Slides.
     void put(Object obj) throws InterruptedException {  //put(item) {
         lock.lock();                                    //  lock.acquire();
-        //System.out.println(Thread.currentThread().getName() + " acquires put() lock");
         try {
             while (count == items.length) {             //  while ((tail-front)==MAX) {
                 fullBufferWaitMsg();
@@ -60,18 +59,15 @@ public class BoundedBuffer {
                 putptr = 0;
             count++;                                    //  tail++;
             notEmpty.signal();                          //  empty.signal(lock);
-            //System.out.println(Thread.currentThread().getName() + " put() lock signal");
         } finally {
             lock.unlock();                              //  lock.release();
-            //System.out.println(Thread.currentThread().getName() + " releases put() lock");
-        }                                               //}
-    }
+        }
+    }                                                   //}
 
     /* ◦take() needs to return a variable of type Object */
-    // From reference. Compare with Day 12/13 Slides. Condition Variable: count
+    // From reference.                                  // Compare with Day 12 & 13 Slides.
     Object take() throws InterruptedException {         //get() {
         lock.lock();                                    //  lock.acquire();
-        //System.out.println(Thread.currentThread().getName() + " acquires take() lock");
         try {
             while (count == 0) {                        //  while (front == tail) {
                 emptyBufferWaitMsg();
@@ -82,11 +78,9 @@ public class BoundedBuffer {
                 takeptr = 0;
             count--;                                    //  front++;
             notFull.signal();                           //  full.signal(lock);
-            //System.out.println(Thread.currentThread().getName() + " take() lock signal");
             return o;                                   //  return item;
         } finally {
             lock.unlock();                              //  lock.release();
-            //System.out.println(Thread.currentThread().getName() + " releases take() lock");
         }
     }                                                   //}
 }

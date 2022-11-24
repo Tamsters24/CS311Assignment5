@@ -7,25 +7,27 @@
 import java.util.Random;
 
 public class Consumer implements Runnable {
-    private final BoundedBuffer takeBuffer;
+    private final BoundedBuffer sharedBuffer;
     private Message consumerMsg;
     private String consumerName;
 
-    /* •Consumer should have a constructor that takes a BoundedBuffer as a parameter. */
+    /* •Consumer should have a constructor that takes a BoundedBuffer
+     *  as a parameter. */
     public Consumer (BoundedBuffer bb) {
-        takeBuffer = bb;
+        sharedBuffer = bb;
     }
 
-    /* ◦Consumer should continually read from the BoundedBuffer by calling the take() method. */
+    /* ◦Consumer should continually read from the BoundedBuffer
+     *  by calling the take() method. */
     public void run() {
         consumerName = Thread.currentThread().getName();
-        //System.out.println("Hello from " + consumerName);
-        //System.out.println("Inside " + consumerName);
         try {
-            consumerMsg = (Message) takeBuffer.take();
+            /* ◦... you may need to cast objects
+             *  that you read from the BoundedBuffer. */
+            consumerMsg = (Message) sharedBuffer.take();
             while (!consumerMsg.isTerminate()) {
-                consumerMsg = (Message) takeBuffer.take();
-                consumerMessage();
+                consumerMsg = (Message) sharedBuffer.take();
+                printCnsmrMessage();
                 consumerSleep();
             }
             if (consumerMsg.isTerminate())
@@ -39,7 +41,7 @@ public class Consumer implements Runnable {
 
     /* ◦When Consumer reads something from the buffer, it should print the contents of the
      *  message that it read, and print the thread name as part of that message. */
-    void consumerMessage() {
+    void printCnsmrMessage() {
         System.out.println(consumerName + " has taken a message: " + consumerMsg);
     }
 
@@ -48,11 +50,11 @@ public class Consumer implements Runnable {
      *  (in milliseconds) prior to sleeping. */
     void consumerSleep() {
         Random randomCnsmrSleep = new Random();
-        int mSecSleep = randomCnsmrSleep.nextInt(5500) + 5000;
+        int msSleep = randomCnsmrSleep.nextInt(5500) + 5000;
         try {
             System.out.println(consumerName + " will sleep for "
-                    + mSecSleep/1000 + " seconds.");
-            Thread.sleep(mSecSleep);
+                    + msSleep + " milliseconds.");
+            Thread.sleep(msSleep);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

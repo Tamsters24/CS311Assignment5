@@ -4,43 +4,68 @@
  * Fall 2022
  * Assignment 5 */
 
+import java.util.Random;
+
 public class Consumer implements Runnable {
-    private final String consumerName;
     private final BoundedBuffer takeBuffer;
     private Message consumerMsg;
+    private String consumerName;
 
     /* •Consumer should have a constructor that takes a BoundedBuffer as a parameter. */
-    public Consumer (BoundedBuffer bb, String cName) {
+    public Consumer (BoundedBuffer bb) {
         takeBuffer = bb;
-        consumerName = cName;
-        System.out.println("Hello from " + consumerName);
     }
 
     public void run() {
-        System.out.println("Inside " + consumerName);
-        while (takeBuffer.count != 0) {
-            try {
-                takeBuffer.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        consumerName = Thread.currentThread().getName();
+        //System.out.println("Hello from " + consumerName);
+        //System.out.println("Inside " + consumerName);
+        try {
+            consumerMsg = (Message) takeBuffer.take();
+            consumerMessage();
+            consumerSleep();
+            if (consumerMsg.isTerminate())
+                consumerExit();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception ex) {}
+        //while (takeBuffer.count != 0)
+        //    takeCaller();
     }
 
     /* ◦Consumer should continually read from the BoundedBuffer by calling the take() method. */
     void takeCaller() {
+        try {
+            consumerMsg = (Message) takeBuffer.take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /* ◦When Consumer reads something from the buffer, it should print the contents of the
      *  message that it read, and print the thread name as part of that message. */
-    void consumerMessage() {}
+    void consumerMessage() {
+        System.out.println(consumerName + " has taken a message: " + consumerMsg);
+    }
 
     /* ◦sleep for a random time between 5.5 and 10.5 seconds after each time that it reads from
      *  the BoundedBuffer. You must print the value that your thread is going to sleep
      *  (in milliseconds) prior to sleeping. */
-    void consumerSleep() {}
+    void consumerSleep() {
+        Random randomCnsmrSleep = new Random();
+        int mSecSleep = randomCnsmrSleep.nextInt(5500) + 5000;
+        try {
+            System.out.println(consumerName + " will sleep for "
+                    + mSecSleep/1000 + " seconds.");
+            Thread.sleep(mSecSleep);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     /* ◦if the Consumer thread reads a message that indicates to "terminate", then that
      *  particular Consumer thread should exit. */
-    void consumerExit() {}
+    void consumerExit() {
+        Thread.currentThread().interrupt();
+    }
 }

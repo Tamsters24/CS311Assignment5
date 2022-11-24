@@ -28,11 +28,17 @@ public class BoundedBuffer {
 
     /* ◦BoundedBuffer should print a message containing the
      *  thread name prior to waiting on an empty buffer. */
-    void emptyBufferWaitMsg() {}
+    void emptyBufferWaitMsg() {
+        System.out.println(Thread.currentThread().getName()
+                + " waiting, buffer empty");
+    }
 
     /* ◦BoundedBuffer should print a message containing the
      *  thread name prior to waiting on a full buffer. */
-    void fullBufferWaitMsg() {}
+    void fullBufferWaitMsg() {
+        System.out.println("The Bounded Buffer is FULL. "
+                + Thread.currentThread().getName() + " will begin waiting.");
+    }
 
     /* ◦Note that the sample code above has put() and get() methods
      *  that deal with class Object. Your BoundedBuffer class needs
@@ -43,20 +49,21 @@ public class BoundedBuffer {
     // From reference. Compare with Day 12 Slides. Comparison is "notEmpty" vs "empty"
     void put(Object obj) throws InterruptedException {  //put(item) {
         lock.lock();                                    //  lock.acquire();
-        System.out.println("put() lock acquire");
+        //System.out.println(Thread.currentThread().getName() + " acquires put() lock");
         try {
-            while (count == items.length)               //  while ((tail-front)==MAX)
+            while (count == items.length) {             //  while ((tail-front)==MAX) {
+                fullBufferWaitMsg();
                 notFull.await();                        //    full.wait(lock);
-            System.out.println("put() after wait");
+            }                                           //  }
             items[putptr] = obj;                        //  buf[tail % MAX] = item;
             if (++putptr == items.length)
                 putptr = 0;
             count++;                                    //  tail++;
             notEmpty.signal();                          //  empty.signal(lock);
-            System.out.println("put() lock signal");
+            //System.out.println(Thread.currentThread().getName() + " put() lock signal");
         } finally {
             lock.unlock();                              //  lock.release();
-            System.out.println("put() lock release");
+            //System.out.println(Thread.currentThread().getName() + " releases put() lock");
         }                                               //}
     }
 
@@ -64,21 +71,22 @@ public class BoundedBuffer {
     // From reference. Compare with Day 12/13 Slides. Condition Variable: count
     Object take() throws InterruptedException {         //get() {
         lock.lock();                                    //  lock.acquire();
-        System.out.println("take() lock acquire");
+        //System.out.println(Thread.currentThread().getName() + " acquires take() lock");
         try {
-            while (count == 0)                          //  while (front == tail)
+            while (count == 0) {                        //  while (front == tail) {
+                emptyBufferWaitMsg();
                 notEmpty.await();                       //    empty.wait(lock);
-            System.out.println("take() after wait");
+            }                                           //  }
             Object o = items[takeptr];                  //  item = buf[front % MAX]
             if (++takeptr == items.length)
                 takeptr = 0;
             count--;                                    //  front++;
             notFull.signal();                           //  full.signal(lock);
-            System.out.println("take() lock signal");
+            //System.out.println(Thread.currentThread().getName() + " take() lock signal");
             return o;                                   //  return item;
         } finally {
             lock.unlock();                              //  lock.release();
-            System.out.println("take() lock release");
+            //System.out.println(Thread.currentThread().getName() + " releases take() lock");
         }
     }                                                   //}
 }

@@ -19,7 +19,6 @@ public class Message {
     /* ◦a isTerminate() method, which returns true if the message is a
      *  terminate message, and false if not. */
     boolean isTerminate() {
-        System.out.println("Terminate: " + terminate);
         return terminate;
     }
 

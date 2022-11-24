@@ -13,29 +13,8 @@ public class BufferTest implements Runnable{
     static BoundedBuffer userBuffer;
     static Message msg;
 
-    /* •Your BufferTest class will act as the producer. */
-    public void run() {
-        //System.out.println("Inside Producer");
-        try {
-            Console cmdInput = System.console();    // Fire up the ol' console
-            System.out.println("Producer: Enter a message: ");
-            msg = new Message(cmdInput.readLine());
-            userBuffer.put(msg);
-            /* ◦Continually accept input strings from the user, creating a Message with the input string,
-                and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
-            while (!msg.isTerminate()) {
-                System.out.println("Enter a string: ");
-                msg = new Message(cmdInput.readLine());
-                userBuffer.put(msg);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     /* BufferTest should contain your main method, and should do the following: */
     /* ◦main() should accept two command line arguments */
-    /* •All user I/O must be from the terminal. */
     public static void main (String[]args) {
         System.out.println("hello from BufferTest:main()");
         try {
@@ -63,8 +42,8 @@ public class BufferTest implements Runnable{
             /* ◦Set the thread name of the main thread to be "Producer" */
             t[numConsumers] = new Thread(new BufferTest());
             t[numConsumers].setName("Producer");
-            //t[numConsumers].start();
 
+            // Start threads
             for (int j = 0; j < (numConsumers + 1); j++)
                 t[j].start();
 
@@ -97,4 +76,27 @@ public class BufferTest implements Runnable{
             System.out.println("\t---***************************************---\n");
         }
     }
+
+    /* •Your BufferTest class will act as the producer. */
+    /* •All user I/O must be from the terminal. */
+    public void run() {
+        //System.out.println("Inside Producer");
+        try {
+            Console cmdInput = System.console();    // Fire up the ol' console
+            System.out.println("Producer: Enter a message: ");
+            msg = new Message(cmdInput.readLine());
+            userBuffer.put(msg);
+            /* ◦Continually accept input strings from the user, creating a Message with the input string,
+                and then calling the put() method on the BoundedBuffer, each time sending it the Message. */
+            while (!msg.isTerminate()) {
+                System.out.println("Enter a string: ");
+                msg = new Message(cmdInput.readLine());
+                userBuffer.put(msg);
+            }
+            userBuffer.put(msg);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

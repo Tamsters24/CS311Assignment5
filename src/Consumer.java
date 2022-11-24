@@ -16,29 +16,24 @@ public class Consumer implements Runnable {
         takeBuffer = bb;
     }
 
+    /* ◦Consumer should continually read from the BoundedBuffer by calling the take() method. */
     public void run() {
         consumerName = Thread.currentThread().getName();
         //System.out.println("Hello from " + consumerName);
         //System.out.println("Inside " + consumerName);
         try {
             consumerMsg = (Message) takeBuffer.take();
-            consumerMessage();
-            consumerSleep();
+            while (!consumerMsg.isTerminate()) {
+                consumerMsg = (Message) takeBuffer.take();
+                consumerMessage();
+                consumerSleep();
+            }
             if (consumerMsg.isTerminate())
                 consumerExit();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (Exception ex) {}
-        //while (takeBuffer.count != 0)
-        //    takeCaller();
-    }
-
-    /* ◦Consumer should continually read from the BoundedBuffer by calling the take() method. */
-    void takeCaller() {
-        try {
-            consumerMsg = (Message) takeBuffer.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println("Something else weird has happened");
         }
     }
 
@@ -66,6 +61,7 @@ public class Consumer implements Runnable {
     /* ◦if the Consumer thread reads a message that indicates to "terminate", then that
      *  particular Consumer thread should exit. */
     void consumerExit() {
+        System.out.println(consumerName + " is exiting. Later gator.");
         Thread.currentThread().interrupt();
     }
 }

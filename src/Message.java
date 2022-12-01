@@ -32,7 +32,7 @@ public class Message {
     public String toString() {
         /* ◦"quitter: true" if the message is a terminate message */
         if (isTerminate())
-            messageContent = "quitter: true";
+            messageContent = "quitter: true\n";
         /* ◦the string message if the message is NOT a terminate message. */
         return messageContent;
     }

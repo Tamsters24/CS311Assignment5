@@ -15,7 +15,6 @@ public class Consumer implements Runnable {
      *  as a parameter. */
     public Consumer (BoundedBuffer bb) {
         sharedBuffer = bb;
-        //sharedBuffer = BufferTest.buffer;
     }
 
     /* ◦Consumer should continually read from the BoundedBuffer
@@ -28,7 +27,6 @@ public class Consumer implements Runnable {
             printCnsmrMessage();
             consumerSleep();
             while (!consumerMsg.isTerminate()) {
-                //System.out.println(consumerName + " is holding lock " + Thread.holdsLock(sharedBuffer));
                 consumerMsg = (Message) sharedBuffer.take();
                 printCnsmrMessage();
                 consumerSleep();
@@ -45,7 +43,7 @@ public class Consumer implements Runnable {
     /* ◦When Consumer reads something from the buffer, it should print the contents of the
      *  message that it read, and print the thread name as part of that message. */
     void printCnsmrMessage() {
-        System.out.println(consumerName + " has taken a message: " + consumerMsg);
+        System.out.println(consumerName + " reading a message: " + consumerMsg);
     }
 
     /* ◦sleep for a random time between 5.5 and 10.5 seconds after each time that it reads from
@@ -66,6 +64,7 @@ public class Consumer implements Runnable {
     /* ◦if the Consumer thread reads a message that indicates to "terminate", then that
      *  particular Consumer thread should exit. */
     void consumerExit() {
+        System.out.println(consumerName + " got terminate message. thread exiting.");
         Thread.currentThread().interrupt();
     }
 }
